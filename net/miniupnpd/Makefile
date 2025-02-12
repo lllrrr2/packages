@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=miniupnpd
-PKG_VERSION:=2.2.3
-PKG_RELEASE:=2
+PKG_VERSION:=2.3.7
+PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://miniupnp.tuxfamily.org/files
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_HASH:=f89c310ce9575183af3fec61af65e548f85114133df8caaaa9e204c13b7a9da5
+PKG_HASH:=fbdd5501039730f04a8420ea2f8f54b7df63f9f04cde2dc67fa7371e80477bbe
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=BSD-3-Clause
@@ -34,14 +34,13 @@ define Package/miniupnpd/Default
 	+libmnl \
 	+libuuid
   PROVIDES:=miniupnpd
-  TITLE:=Lightweight UPnP IGD, NAT-PMP & PCP daemon
+  TITLE:=Lightweight UPnP IGD & PCP/NAT-PMP daemon
   SUBMENU:=Firewall
   URL:=https://miniupnp.tuxfamily.org/
 endef
 
 define Package/miniupnpd-iptables
   $(call Package/miniupnpd/Default)
-  CONFLICTS:=miniupnpd-nftables
   DEPENDS+= \
 	+IPV6:ip6tables \
 	+IPV6:libip6tc \
@@ -58,6 +57,8 @@ define Package/miniupnpd-nftables
 	+libnftnl
   TITLE+= (nftables)
   VARIANT:=nftables
+  DEFAULT_VARIANT:=1
+  CONFLICTS:=miniupnpd-iptables
 endef
 
 define Package/miniupnpd/conffiles/Default
@@ -78,7 +79,8 @@ CONFIGURE_ARGS = \
 	--leasefile \
 	--portinuse \
 	--firewall=$(BUILD_VARIANT) \
-	--disable-fork
+	--disable-fork \
+	--regex
 
 TARGET_CFLAGS += $(FPIC)
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
@@ -108,6 +110,8 @@ endef
 
 define Package/miniupnpd-nftables/install
 	$(call Package/miniupnpd/install/Default,$1)
+	$(INSTALL_DIR) $(1)/usr/share/nftables.d
+	$(CP) ./files/nftables.d/* $(1)/usr/share/nftables.d/
 endef
 
 $(eval $(call BuildPackage,miniupnpd-iptables))

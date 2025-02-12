@@ -8,16 +8,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libdaq3
-PKG_VERSION:=3.0.5
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_VERSION:=3.0.18
+PKG_RELEASE:=1
 
 PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org>
 
 PKG_LICENSE:=GPL-2.0-only
+PKG_LICENSE_FILES:=COPYING LICENSE
 
 PKG_SOURCE:=libdaq-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/snort3/libdaq/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=4281464c5502037669e69d314b628df863420f590c4999c5b567c8016cd1e658
+PKG_HASH:=301db00d33ccd7be546ffb40cd9f4fc41031a5d67196b48bd8b76ae36e10f078
 PKG_BUILD_DIR:=$(BUILD_DIR)/libdaq-$(PKG_VERSION)
 
 PKG_FIXUP:=autoreconf
@@ -31,7 +32,7 @@ define Package/libdaq3
   CATEGORY:=Libraries
   TITLE:=DAQ library
   URL:=$(PKG_SOURCE_URL)
-  DEPENDS:=+libdnet +libpcap +libstdcpp
+  DEPENDS:=+libdnet +libpcap +libstdcpp +libmnl +libnetfilter-queue
 endef
 
 define Package/libdaq3/description
@@ -40,7 +41,7 @@ endef
 
 CONFIGURE_ARGS+= \
 	--disable-static \
-	--disable-nfq-module \
+	--enable-nfq-module \
 	--with-dnet-includes="$(STAGING_DIR)/usr/include" \
 	--with-dnet-libraries="$(STAGING_DIR)/usr/lib" \
 	--with-libpcap-includes="$(STAGING_DIR)/usr/include" \

@@ -4,7 +4,9 @@ uvol_init() {
 	local metasz freesz totalsz
 	uvol detect
 	metasz="$(uvol size .meta 2>/dev/null)"
-	[ "$((metasz))" -gt 0 ] && return
+	if [ "$metasz" ]; then
+		[ "$((metasz))" -gt 0 ] && return
+	fi
 	totalsz="$(uvol total)"
 	freesz="$(uvol free)"
 	metasz="$((totalsz / 10240))"
@@ -12,6 +14,8 @@ uvol_init() {
 	[ "$metasz" -gt "$freesz" ] && return
 	uvol create .meta "$metasz" rw
 	uvol up .meta
+	grep -q "uvol/.meta" /proc/mounts || return
+	mkdir -p "/var/run/uvol/.meta/apk"
 }
 
 uci -q get fstab.@uvol[0].initialized >/dev/null || uvol_init

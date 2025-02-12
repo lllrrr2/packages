@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=davfs2
 PKG_VERSION:=1.6.1
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SAVANNAH/davfs2
@@ -54,6 +54,7 @@ endef
 
 define Package/davfs2/conffiles
 /etc/davfs2/davfs2.conf
+/etc/davfs2/secrets
 endef
 
 CONFIGURE_ARGS += \
